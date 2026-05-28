@@ -3,108 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RidePic · Simple</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>RidePic - Simple</title>
+    
+    <link rel="stylesheet" href="styles.css?v=4">
     <script src="index.js" defer></script>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div id="pantallaLogin" class="pantalla-login">
-    <div class="login-box">
-        <h1>RidePic</h1>
-        <input type="text" id="loginUsuario" placeholder="Usuario">
-        <input type="password" id="loginPassword" placeholder="Contraseña">
-        <button onclick="login()">Entrar</button>
-        <button onclick="registrar()">Registrarse</button>
-    </div>
-</div>
-
-<!-- APP -->
-<div id="app" style="display:none;">
-
-    <div class="header">
-        <div class="logo">RidePic</div>
-
-        <div class="buscador">
-            <input type="text" placeholder="Buscar...">
+    <div id="pantallaLogin" class="pantalla-login">
+        <div class="login-box">
+            <h1>RidePic</h1>
+            <input type="text" id="loginUsuario" placeholder="Usuario">
+            <input type="password" id="loginPassword" placeholder="Contraseña">
+            <button onclick="login()">Entrar</button>
+            <button onclick="registrar()">Registrarse</button>
+            <div id="mensajeError" class="mensaje-error"></div>
         </div>
+    </div>
 
-        <div class="tarjeta-usuario">
-            <div class="avatar"></div>
-            <div class="usuario-info">
-                <div class="nombre-usuario" id="nombreHeader">usuario</div>
-                <div class="modelo">modelo</div>
+    <div id="app" class="app-container">
+
+        <div class="header">
+            <div class="logo">RidePic</div>
+
+            <div class="buscador">
+                <input type="text" id="inputBuscar" placeholder="Buscar usuario..." oninput="filtrarUsuarios()">
             </div>
-        </div>
-    </div>
 
-    <div class="contenedor">
-
-        <!-- PODIO -->
-        <div class="podio">
-            <h2>Podio del día</h2>
-
-            <div class="carrusel">
-                <input type="radio" name="categoria" id="carros" checked>
-                <input type="radio" name="categoria" id="motos">
-                <input type="radio" name="categoria" id="camionetas">
-
-                <div class="botones">
-                    <label for="carros">Carros</label>
-                    <label for="motos">Motos</label>
-                    <label for="camionetas">Camionetas</label>
+            <div class="perfil-header-container">
+                <div class="tarjeta-usuario" onclick="toggleMenuPerfil(event)">
+                    <div class="avatar"></div>
+                    <div class="usuario-info">
+                        <div class="nombre-usuario" id="nombreHeader">usuario</div>
+                        <div class="modelo">modelo</div>
+                    </div>
                 </div>
-
-                <div class="slides">
-                    <div class="slide">
-                        <h3>Carros</h3>
-                        <div class="podio-lugares">
-                            <div class="lugar segundo">2° car_user</div>
-                            <div class="lugar primero">1° car_master</div>
-                            <div class="lugar tercero">3° speed_user</div>
-                        </div>
-                    </div>
-
-                    <div class="slide">
-                        <h3>Motos</h3>
-                        <div class="podio-lugares">
-                            <div class="lugar segundo">2° rider</div>
-                            <div class="lugar primero">1° motogp</div>
-                            <div class="lugar tercero">3° yamaha</div>
-                        </div>
-                    </div>
-
-                    <div class="slide">
-                        <h3>Camionetas</h3>
-                        <div class="podio-lugares">
-                            <div class="lugar segundo">2° offroad</div>
-                            <div class="lugar primero">1° 4x4king</div>
-                            <div class="lugar tercero">3° pickup</div>
-                        </div>
-                    </div>
+                
+                <div id="menuPerfilOpciones" class="menu-desplegable-perfil">
+                    <button onclick="cambiarFotoPerfil()">Cambiar imagen</button>
+                    <button onclick="cerrarSesion()" class="btn-logout">Cerrar sesión</button>
                 </div>
             </div>
         </div>
 
-        <!-- GALERÍA -->
-        <h2 class="titulo-seccion">Fotos recientes</h2>
-        <div class="galeria"></div>
+        <div class="contenedor">
+
+            <div class="podio">
+                <h2>Fotos más votadas</h2>
+                <div class="podio-fotos" id="contenedorPodio"></div>
+            </div>
+
+            <h2 class="titulo-seccion">Fotos recientes</h2>
+            <div class="galeria"></div>
+
+        </div>
+
+        <div class="menu-inferior">
+            <div class="opcion-menu activo">Perfil</div>
+            <div class="opcion-menu" onclick="abrirSubida()">Subir</div>
+            <div class="opcion-menu" onclick="generarCartaHotWheels()">HotWheel</div>
+        </div>
 
     </div>
 
-    <!-- MENÚ -->
-    <div class="menu-inferior">
-        <div class="opcion-menu activo">Perfil</div>
-        <div class="opcion-menu" onclick="abrirSubida()">Subir</div>
-        <div class="opcion-menu">HotWheel</div>
+    <div id="modalHotWheels" class="modal-hotwheels-backdrop">
+        <div class="hotwheels-card-container">
+            <img src="image_4.png" alt="Plantilla Hot Wheels" class="hotwheels-canvas-bg">        
+            <img id="fotoCarroCarta" src="" alt="Auto Destacado" class="hotwheels-car-render">
+            
+            <div id="nombreUsuarioCarta" class="hotwheels-text-user">USER</div>
+            <div id="modeloCarta" class="hotwheels-text-edition">EDICIÓN ESPECIAL</div>
+
+            <button class="btn-close-modal" onclick="cerrarModalHotWheels()">Cerrar</button>
+        </div>
     </div>
 
-</div>
-
-<!-- INPUT OCULTO -->
-<input type="file" id="inputImagen" accept="image/*" style="display:none;">
+    <input type="file" id="inputImagen" accept="image/*" style="display:none;">
+    <input type="file" id="inputFotoPerfil" accept="image/*" style="display:none;">
 
 </body>
 </html>
